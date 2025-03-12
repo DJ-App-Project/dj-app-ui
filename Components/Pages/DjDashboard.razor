@@ -21,7 +21,7 @@
             </select>
         </div>
 
-        <h2 class="section-title">Song Leaderboard</h2>
+        <h2 class="section-title"><strong class="larger-text">TOP 10</strong> Song Leaderboard</h2>
         <div class="table-container">
             <table class="custom-table" id="song-leaderboard">
                 <thead>
@@ -49,7 +49,27 @@
             </table>
         </div>
 
-        <h2 class="section-title">All Added Songs</h2>
+        <div class="add-song-container">
+            <h2 class="section-title">Add a New Song via Search</h2>
+            <div class="form-group">
+                <label for="songSearch">Search Song:</label>
+                <input id="songSearch" type="text" class="form-control" @bind="SearchTerm" @oninput="OnSearchInput" autocomplete="off" />
+                @if (!string.IsNullOrEmpty(SearchTerm) && FilteredSongs.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var suggestion in FilteredSongs)
+                        {
+                            <li class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                @onclick="() => AddSongFromSearch(suggestion)">
+                                @suggestion.Name - @suggestion.Artist
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <h2 class="section-title">All<small> Listed Songs</small></h2>
         <div class="table-container">
             <table class="custom-table">
                 <thead>
@@ -74,25 +94,5 @@
             </table>
         </div>
         <button class="btn btn-danger" @onclick="DeleteSelectedSongs">Delete Selected Songs</button>
-
-        <div class="bottom-section">
-            <h2 class="section-title">Add a New Song via Search</h2>
-            <div class="form-group">
-                <label for="songSearch">Search Song:</label>
-                <input id="songSearch" type="text" class="form-control" @bind="SearchTerm" @oninput="OnSearchInput" autocomplete="off" />
-                @if (!string.IsNullOrEmpty(SearchTerm) && FilteredSongs.Any())
-                {
-                    <ul class="list-group">
-                        @foreach (var suggestion in FilteredSongs)
-                        {
-                            <li class="list-group-item list-group-item-action" style="cursor: pointer;"
-                                @onclick="() => AddSongFromSearch(suggestion)">
-                                @suggestion.Name - @suggestion.Artist
-                            </li>
-                        }
-                    </ul>
-                }
-            </div>
-        </div>
     </div>
 </section>

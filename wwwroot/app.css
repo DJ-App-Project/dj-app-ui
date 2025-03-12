@@ -93,6 +93,14 @@ h1:focus {
     padding-bottom: 0 !important;
 }
 
+.larger-text {
+    font-size: 49px;
+}
+
+small {
+    color: #cacaca;
+}
+
 navbar.scrolled nav-link a {
     color: #020202 !important;
 }
