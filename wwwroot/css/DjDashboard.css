@@ -109,3 +109,7 @@ button.btn-danger {
     padding-top: 1vh;
     padding-bottom: 5vh;
 }
+
+small {
+    color: #0099D1;
+}
