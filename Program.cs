@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Dj.Components;
 
 var builder = WebApplication.CreateBuilder(args);
