@@ -5,3 +5,4 @@ Trenutne implementirane strani:
 - Home Page
 - Logine/Reigster Page (ni funkcionalnosti)
 - Profile Page (ni funkcionalnosti)
+- Dj Dashboard (mock funkcionalnost - /djdash)
