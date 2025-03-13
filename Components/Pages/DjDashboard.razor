@@ -7,7 +7,7 @@
 
 <section class="default-page-dark">
     <div class="hero">
-        <h1 class="display-2"><b>Dj Dashboard</b></h1>
+        <h1 class="display-2"><b>DJ Dashboard</b></h1>
     </div>
 
     <div class="container">
@@ -80,7 +80,6 @@
             </div>
         </div>
 
-
         <div class="table-container">
             <table class="custom-table">
                 <thead>
@@ -92,7 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var song in CurrentEventData.Songs)
+                    @foreach (var song in PaginatedSongs)
                     {
                         <tr>
                             <td><input type="checkbox" @bind="song.IsSelected" /></td>
@@ -104,6 +103,18 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="pagination-container d-flex justify-content-center align-items-center gap-2 mb-4">
+            <button @onclick="() => GoToPage(CurrentPage - 1)" disabled="@(CurrentPage == 1)">&lt;</button>
+
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                <button @onclick="() => GoToPage(i)" class="@(i == CurrentPage ? "active-page" : "")">@i</button>
+            }
+
+            <button @onclick="() => GoToPage(CurrentPage + 1)" disabled="@(CurrentPage == TotalPages)">&gt;</button>
+        </div>
+
         <div class="d-flex justify-content-center align-items-center w-100">
             <button class="btn-danger" @onclick="DeleteSelectedSongs">Delete Selected Songs</button>
         </div>

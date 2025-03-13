@@ -53,12 +53,21 @@ namespace Dj.Components.Pages
                    s.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
                 || s.Artist.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
 
+        private const int PageSize = 15;
+        private int CurrentPage { get; set; } = 1;
+
+        private int TotalPages =>
+            (int)Math.Ceiling((decimal)(CurrentEventData?.Songs.Count / (double)PageSize));
+
+        private IEnumerable<Song> PaginatedSongs =>
+            CurrentEventData?.Songs
+                .Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize) ?? Enumerable.Empty<Song>();
+
         protected override void OnInitialized()
         {
             _selectedEvent = Events.First();
-
             InitializeEventData();
-
             CurrentEventData = EventDataDict[SelectedEvent];
         }
 
@@ -72,6 +81,8 @@ namespace Dj.Components.Pages
             {
                 CurrentEventData = new EventData();
             }
+
+            CurrentPage = 1;
             StateHasChanged();
         }
 
@@ -85,6 +96,7 @@ namespace Dj.Components.Pages
                 .Where(s => !s.IsSelected)
                 .ToList();
 
+            CurrentPage = 1;
             StateHasChanged();
         }
 
@@ -107,6 +119,15 @@ namespace Dj.Components.Pages
             }
             SearchTerm = "";
             StateHasChanged();
+        }
+
+        private void GoToPage(int page)
+        {
+            if (page >= 1 && page <= TotalPages)
+            {
+                CurrentPage = page;
+                StateHasChanged();
+            }
         }
 
         private void InitializeEventData()
@@ -132,6 +153,17 @@ namespace Dj.Components.Pages
                     new Song { Name = "Sultans of Swing",        Artist = "Dire Straits",     Points = 110 }
                 }
             };
+
+            for (int i = 16; i <= 32; i++)
+            {
+                eventAData.Songs.Add(new Song
+                {
+                    Name = $"Extra Song {i}",
+                    Artist = $"Extra Artist {i}",
+                    Points = 100 - i // Just for variation
+                });
+            }
+
             EventDataDict["Event A"] = eventAData;
 
             var eventBData = new EventData

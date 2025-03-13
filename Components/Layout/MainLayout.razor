@@ -1,18 +1,36 @@
 ﻿@inherits LayoutComponentBase
+@using Dj.Models
+@inject Dj.Services.AppState AppState
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
 <NavMenu />
 
 <div class="page">
     <main>
-
-
-
-            @Body
-      
+        @Body
     </main>
 </div>
 
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Only AFTER the client connects can we do JS interop
+            var token = await LocalStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                // The user had a token, so they're already logged in
+                var user = await LocalStorage.GetItemAsync<LoginUser>("user");
+                AppState.SetLoggedIn(true, user);
+            }
+            else
+            {
+                // No token = not logged in
+                AppState.SetLoggedIn(false, null);
+            }
+
+            StateHasChanged(); // re-render now that we've set the login state
+        }
+    }
+}
