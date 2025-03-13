@@ -52,7 +52,6 @@
         <div class="add-song-container">
             <h2 class="section-title">Add a New Song via Search</h2>
             <div class="form-group">
-                <label for="songSearch">Search Song:</label>
                 <input id="songSearch" type="text" class="form-control" @bind="SearchTerm" @oninput="OnSearchInput" autocomplete="off" />
                 @if (!string.IsNullOrEmpty(SearchTerm) && FilteredSongs.Any())
                 {
@@ -69,7 +68,19 @@
             </div>
         </div>
 
-        <h2 class="section-title">All<small> Listed Songs</small></h2>
+        <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
+            <h2 class="section-title mb-2 mb-md-0">All <small>Listed Songs</small></h2>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="toggle-text">Allow users to add songs:</span>
+                <label class="switch mb-0">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+
         <div class="table-container">
             <table class="custom-table">
                 <thead>
@@ -93,6 +104,8 @@
                 </tbody>
             </table>
         </div>
-        <button class="btn btn-danger" @onclick="DeleteSelectedSongs">Delete Selected Songs</button>
+        <div class="d-flex justify-content-center align-items-center w-100">
+            <button class="btn-danger" @onclick="DeleteSelectedSongs">Delete Selected Songs</button>
+        </div>
     </div>
 </section>

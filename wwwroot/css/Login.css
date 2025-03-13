@@ -1,0 +1,25 @@
+﻿.card {
+    background-color: #202020;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+.card-header {
+    background-color: #1a1a1a;
+    color: #fff;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-body {
+    color: white;
+    padding: 20px;
+}
