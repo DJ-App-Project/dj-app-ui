@@ -30,19 +30,21 @@ else
                     @if (AppState.IsLoggedIn)
                     {
                         <li class="nav-item px-3">
-                            <NavLink class="nav-link" href="profil">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Moj profil
-                            </NavLink>
+                            <Dropdown Title="Dogodki">
+                                <li><NavLink class="dropdown-item navbar-dropdown-item" href="djdash">DJ Dashboard</NavLink></li>
+                                <li><NavLink class="dropdown-item navbar-dropdown-item" href="dogodek_dodaj">Nov Dogodek</NavLink></li>
+                            </Dropdown>
                         </li>
+
                         <li class="nav-item px-3">
-                            <a class="nav-link" @onclick="Logout">
-                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Odjava
-                            </a>
-                        </li>
-                        <li class="nav-item px-3">
-                            <a class="nav-link" href="djdash">
-                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> DJ Dashboard
-                            </a>
+                            <Dropdown Title="Profil">
+                                <li>
+                                    <NavLink class="dropdown-item navbar-dropdown-item" href="profil">Moj profil</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink class="dropdown-item navbar-dropdown-item" @onclick="Logout">Odjava</NavLink>
+                                </li>
+                            </Dropdown>
                         </li>
                     }
                     else
@@ -60,14 +62,14 @@ else
 
     <script>
         window.addEventListener('scroll', function () {
-          var navbar = document.getElementById('mainNavbar');
-          if (window.scrollY === 0) {
-            navbar.classList.add('transparent');
-            navbar.classList.remove('scrolled');
-          } else {
-            navbar.classList.remove('transparent');
-            navbar.classList.add('scrolled');
-          }
+            var navbar = document.getElementById('mainNavbar');
+            if (window.scrollY === 0) {
+                navbar.classList.add('transparent');
+                navbar.classList.remove('scrolled');
+            } else {
+                navbar.classList.remove('transparent');
+                navbar.classList.add('scrolled');
+            }
         });
     </script>
 }

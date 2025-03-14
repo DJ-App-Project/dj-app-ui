@@ -1,0 +1,25 @@
+﻿<div class="dropdown" @onmouseover="KeepDropdownOpen" @onmouseleave="CloseDropdown">
+    <button class="nav-link dropdown-toggle">
+        @Title
+    </button>
+    <ul class="dropdown-menu navbar-dropdown-menu navbar-dropdown-menu-end @(IsOpen ? "show" : "")">
+        @ChildContent
+    </ul>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool IsOpen { get; set; } = false;
+
+    private void KeepDropdownOpen()
+    {
+        IsOpen = true;
+    }
+
+    private void CloseDropdown()
+    {
+        IsOpen = false;
+    }
+}
