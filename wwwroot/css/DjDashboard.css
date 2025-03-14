@@ -1,78 +1,78 @@
-﻿body{
+﻿body {
     overflow-x: hidden;
-}    
+}
 
 .table-container {
-        background-color: #1a1a1a;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 2rem;
-    }
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+}
 
-    h2{
-        font-weight: 600;
-    }
+h2 {
+    font-weight: 600;
+}
 
-    h2 b{
+    h2 b {
         font-size: 45px;
     }
 
-    .toggle-text{
-        font-size: 20px;
-        margin-bottom:10px;
-        margin-right: 3px;
+.toggle-text {
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-right: 3px;
+}
+
+#dj-event-selection {
+    margin: 2rem 0 2rem 0;
+}
+
+
+.custom-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+
+#song-leaderboard tbody tr:nth-child(1) {
+    color: #ff2e63;
+}
+
+#song-leaderboard tbody tr:nth-child(2) {
+    color: #d53a8c;
+}
+
+#song-leaderboard tbody tr:nth-child(3) {
+    color: #9b4d9e;
+}
+
+.custom-table thead tr th {
+    background-color: #262626;
+    color: #ffffff;
+    text-align: left;
+    padding: 0.75rem;
+    font-weight: 600;
+    border-bottom: 1px solid #333;
+}
+
+.custom-table tbody tr {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+}
+
+    .custom-table tbody tr:hover {
+        background-color: #2a2a2a;
     }
 
-    #dj-event-selection{
-        margin: 2rem 0 2rem 0;
-    }
+.custom-table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+}
 
-
-    .custom-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 0.5rem;
-    }
-
-    #song-leaderboard tbody tr:nth-child(1) {
-        color: #ff2e63;
-    }
-
-    #song-leaderboard tbody tr:nth-child(2) {
-        color: #d53a8c;
-    }
-
-    #song-leaderboard tbody tr:nth-child(3) {
-        color: #9b4d9e;
-    }
-
-    .custom-table thead tr th {
-        background-color: #262626;
-        color: #ffffff;
-        text-align: left;
-        padding: 0.75rem;
-        font-weight: 600;
-        border-bottom: 1px solid #333;
-    }
-
-        .custom-table tbody tr {
-            background-color: #1a1a1a;
-            border-bottom: 1px solid #333;
-        }
-
-            .custom-table tbody tr:hover {
-                background-color: #2a2a2a;
-            }
-
-        .custom-table td {
-            padding: 0.75rem;
-            vertical-align: middle;
-        }
-
-    input[type="checkbox"] {
-        transform: scale(1.2);
-        margin-right: 0.5rem;
-    }
+input[type="checkbox"] {
+    transform: scale(1.2);
+    margin-right: 0.5rem;
+}
 
 button.btn-danger {
     background-color: #ff4d4d;
@@ -81,34 +81,34 @@ button.btn-danger {
     margin-bottom: 5rem;
 }
 
-        button.btn-danger:hover {
-            background-color: #ff6666;
-        }
-
-    button.btn-primary {
-        background-color: #3b82f6;
-        border: none;
+    button.btn-danger:hover {
+        background-color: #ff6666;
     }
 
-        button.btn-primary:hover {
-            background-color: #2563eb;
-        }
+button.btn-primary {
+    background-color: #3b82f6;
+    border: none;
+}
 
-    .list-group {
-        background-color: #1a1a1a;
-        border: 1px solid #333;
-        border-radius: 4px;
+    button.btn-primary:hover {
+        background-color: #2563eb;
     }
 
-    .list-group-item {
-        background-color: #1a1a1a;
-        color: #fff;
-        border: none;
-    }
+.list-group {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+}
 
-        .list-group-item:hover {
-            background-color: #2a2a2a;
-        }
+.list-group-item {
+    background-color: #1a1a1a;
+    color: #fff;
+    border: none;
+}
+
+    .list-group-item:hover {
+        background-color: #2a2a2a;
+    }
 
 
 .add-song-container {
@@ -204,4 +204,3 @@ button {
     height: 1.6em;
     bottom: 0;
 }
-

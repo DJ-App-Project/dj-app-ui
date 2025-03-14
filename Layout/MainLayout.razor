@@ -14,25 +14,4 @@
     </main>
 </div>
 
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            Console.WriteLine($"[MainLayout] Retrieved token: {token}");
-            if (!string.IsNullOrEmpty(token))
-            {
-                var user = await LocalStorage.GetItemAsync<LoginUser>("user");
-                Console.WriteLine($"[MainLayout] Retrieved user: {user?.Username}");
-                AppState.SetLoggedIn(true, user);
-            }
-            else
-            {
-                Console.WriteLine("[MainLayout] No token found.");
-                AppState.SetLoggedIn(false, null);
-            }
-            StateHasChanged();
-        }
-    }
-}
+

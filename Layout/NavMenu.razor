@@ -4,7 +4,6 @@
 
 @if (AppState == null)
 {
-    <!-- Optionally show a loading indicator -->
     <div>Loading...</div>
 }
 else
@@ -37,7 +36,12 @@ else
                         </li>
                         <li class="nav-item px-3">
                             <a class="nav-link" @onclick="Logout">
-                                <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Odjava
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Odjava
+                            </a>
+                        </li>
+                        <li class="nav-item px-3">
+                            <a class="nav-link" href="djdash">
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> DJ Dashboard
                             </a>
                         </li>
                     }
@@ -76,7 +80,6 @@ else
 
     protected override void OnInitialized()
     {
-        // Check if AppState is provided
         if (AppState == null)
         {
             Console.Error.WriteLine("AppState is null in NavMenu");
