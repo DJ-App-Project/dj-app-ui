@@ -4,36 +4,34 @@
 
 <PageTitle>Dodajanje dogodka</PageTitle>
 
-<section id="login-hero" class="hero-section text-center">
-    <div class="container">
+<section class="default-page-dark">
+
+    <div class="hero text-center">
         <h1 class="display-2"><b>Dodajanje dogodka</b></h1>
     </div>
-</section>
 
-
-<section class="feature-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
-                <div class="card" style="border:2px solid white">
+                <div class="card">
                     <div class="card-header">
-                        <i class="fas fa-sign-in-alt feature-icon"></i> <b style="font-size:1.5rem">Prijava</b>
+                        <i class="fas fa-sign-in-alt feature-icon"></i> <b style="font-size:1.5rem">Dodajanje dogodka</b>
                     </div>
                     <div class="card-body">
                         <form>
                             <div class="form-group">
                                 <label for="inputIme">Ime dogodka</label>
                                 <div class="input-icon">
-                                    <i class="fas fa-envelope"></i>
+                                    <i class="fas fa-user"></i>
                                 </div>
-                                <input id="inputIme" @bind="@NovEvent.Name" @oninput="(e)=> { NovEvent.Name = e.Value ==null? string.Empty:(string)e.Value; }" />
+                                <input id="inputIme" class="form-control" @bind="@NovEvent.Name" @oninput="(e)=> { NovEvent.Name = e.Value ==null? string.Empty:(string)e.Value; }" />
                             </div>
                             <div class="form-group">
                                 <label for="inputOpis">Opis</label>
                                 <div class="input-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <input id="inputOpis" @bind="@NovEvent.Description" @oninput="(e)=> { NovEvent.Description = e.Value ==null? string.Empty:(string)e.Value; }" />
+                                <textarea id="inputOpis" rows="3" class="form-control" @bind="@NovEvent.Description" @oninput="(e)=> { NovEvent.Description = e.Value ==null? string.Empty:(string)e.Value; }" />
                             </div>
                             <div class="form-group">
                                 <label for="inputDatum">Datum dogodka</label>
@@ -47,9 +45,9 @@
                                 <div class="input-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <input id="inputLokacija" @bind="@NovEvent.Location" @oninput="(e)=> { NovEvent.Location = e.Value ==null? string.Empty:(string)e.Value; }" />
+                                <input id="inputLokacija" class="form-control" @bind="@NovEvent.Location" @oninput="(e)=> { NovEvent.Location = e.Value ==null? string.Empty:(string)e.Value; }" />
                             </div>
-                            <button class="btn btn-primary" @onclick="()=>DodajDogodek(NovEvent)">Dodaj dogodek</button>
+                            <button class="button-fancy-blue d-block mx-auto" @onclick="()=>DodajDogodek(NovEvent)">Dodaj dogodek</button>
                         </form>
                     </div>
                 </div>
