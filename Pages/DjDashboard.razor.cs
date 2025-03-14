@@ -35,7 +35,7 @@ namespace DJ.Pages
 
         private Dictionary<string, EventData> EventDataDict { get; set; } = new Dictionary<string, EventData>();
 
-        private EventData CurrentEventData { get; set; } = new EventData();
+        public EventData CurrentEventData { get; private set; } = new EventData();
 
         private string SearchTerm { get; set; } = "";
         private List<Song> AvailableSongs { get; set; } = new List<Song>
