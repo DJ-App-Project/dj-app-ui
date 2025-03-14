@@ -6,3 +6,5 @@ Trenutne implementirane strani:
 - Logine/Reigster Page (ni funkcionalnosti)
 - Profile Page (ni funkcionalnosti)
 - Dj Dashboard (experimental - mock funkcionalnost)
+
+GLEJ ExperimentalWorking branch!!!!!!!!!!! Sem convertal projekt, dodal login. Zdj pa grem z balkona ker bom ju3 mrtev pri kolokviju. Lp.
