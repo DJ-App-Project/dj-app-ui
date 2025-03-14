@@ -1,0 +1,207 @@
+﻿body{
+    overflow-x: hidden;
+}    
+
+.table-container {
+        background-color: #1a1a1a;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    h2{
+        font-weight: 600;
+    }
+
+    h2 b{
+        font-size: 45px;
+    }
+
+    .toggle-text{
+        font-size: 20px;
+        margin-bottom:10px;
+        margin-right: 3px;
+    }
+
+    #dj-event-selection{
+        margin: 2rem 0 2rem 0;
+    }
+
+
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+
+    #song-leaderboard tbody tr:nth-child(1) {
+        color: #ff2e63;
+    }
+
+    #song-leaderboard tbody tr:nth-child(2) {
+        color: #d53a8c;
+    }
+
+    #song-leaderboard tbody tr:nth-child(3) {
+        color: #9b4d9e;
+    }
+
+    .custom-table thead tr th {
+        background-color: #262626;
+        color: #ffffff;
+        text-align: left;
+        padding: 0.75rem;
+        font-weight: 600;
+        border-bottom: 1px solid #333;
+    }
+
+        .custom-table tbody tr {
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+        }
+
+            .custom-table tbody tr:hover {
+                background-color: #2a2a2a;
+            }
+
+        .custom-table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+    input[type="checkbox"] {
+        transform: scale(1.2);
+        margin-right: 0.5rem;
+    }
+
+button.btn-danger {
+    background-color: #ff4d4d;
+    border: none;
+    margin-top: -0.5rem;
+    margin-bottom: 5rem;
+}
+
+        button.btn-danger:hover {
+            background-color: #ff6666;
+        }
+
+    button.btn-primary {
+        background-color: #3b82f6;
+        border: none;
+    }
+
+        button.btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+    .list-group {
+        background-color: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 4px;
+    }
+
+    .list-group-item {
+        background-color: #1a1a1a;
+        color: #fff;
+        border: none;
+    }
+
+        .list-group-item:hover {
+            background-color: #2a2a2a;
+        }
+
+
+.add-song-container {
+    padding-top: 4vh;
+    padding-bottom: 5vh;
+}
+
+small {
+    color: #0099D1;
+}
+
+button {
+    padding: 17px 40px;
+    border-radius: 50px;
+    cursor: pointer;
+    border: 0;
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.05) 0 0 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 15px;
+    transition: all 0.5s ease;
+}
+
+    button:hover {
+        letter-spacing: 3px;
+        background-color: #ff4d4d;
+        color: #ffffff;
+        box-shadow: #ff4d4d 0px 7px 29px 0px;
+    }
+
+    button:active {
+        letter-spacing: 3px;
+        background-color: #ff4d4d;
+        color: #ffffff;
+        box-shadow: #a6a6a6 0px 0px 0px 0px;
+        transform: translateY(10px);
+        transition: 100ms;
+    }
+
+
+
+
+.switch {
+    font-size: 17px;
+    position: relative;
+    display: inline-block;
+    width: 3.5em;
+    height: 2em;
+}
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    width: 3.4em;
+    height: 1.6em;
+    inset: 0;
+    background: #333;
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 1em;
+        width: 1em;
+        left: 0.3em;
+        bottom: 0.3em;
+        background-color: white;
+        border-radius: 50px;
+        box-shadow: 0 0px 20px rgba(0,0,0,0.4);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+.switch input:checked + .slider {
+    background: #0099D1;
+}
+
+.switch input:focus + .slider {
+    box-shadow: 0 0 1px #b84fce;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(1.6em);
+    width: 1.6em;
+    height: 1.6em;
+    bottom: 0;
+}
+

@@ -1,0 +1,315 @@
+﻿@page "/"
+
+<PageTitle>Aplikacija za priporočanje glasbe DJ-jem</PageTitle>
+
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Glasba Priporočila</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        top-row {
+        z-index:5 !important;
+        
+        }
+
+        .navbar, .footer {
+            background-color: #1a1a1a;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff499e !important;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+        }
+
+            .nav-link:hover {
+                color: #49b6ff !important;
+            }
+
+
+
+            .btn-primary:hover {
+                background-color: #779be7;
+                border-color: #779be7;
+            }
+
+
+        .btn-secondary{
+            background: #FF2E63;
+        
+        }
+
+        .card {
+            background-color: #1a1a1a;
+            border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius:10px;
+            overflow:hidden;
+        }
+
+            .card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+        .card-header {
+            background-color: #121416;
+            color: #FF2E63;
+            font-weight: bold;
+            padding:0px;
+        }
+
+        .card-body {
+            color: white;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: #49b6ff;
+        }
+
+        .feature-section {
+            padding: 140px 0;
+        }
+
+            .feature-section h2 {
+                font-size: 2.5rem;
+                font-weight: bold;
+                margin-bottom: 40px;
+
+            }
+
+     
+
+        .img-fluid {
+            border-radius: 10px;
+        }
+
+        .header-image {
+            width: 100%;
+            height: auto;
+            margin-top: 0px;
+            padding:0px;
+        border-radius:0px;
+        }
+
+
+        .container
+        {
+            font-size: 1.25rem;
+        
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 1.1s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flip-card-front {
+            background-color: #1a1a1a;
+            color: white;
+            border: 2px solid #49b6ff;
+        }
+
+        .flip-card-back {
+            background-color: #49b6ff;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flip-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .flip-card p {
+            font-size: 1rem;
+        }
+
+     
+        .flip-card-primary .flip-card-front {
+            background-color: #49b6ff;
+            color: white;
+            border: 2px solid #49b6ff;
+        }
+
+        .flip-card-primary .flip-card-back {
+            background-color: #49b6ff;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+      
+        .flip-card-secondary .flip-card-front {
+            background-color: #FF2E63; 
+            color: white;
+            border: 2px solid #FF2E63;
+        }
+
+        .flip-card-secondary .flip-card-back {
+            background-color: #FF2E63;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="hero-section text-center" id="s1">
+        <div class="container">
+            <h1 class="display-1"><b>DJ Asistent</b></h1>
+            <p class="lead" style="font-size:1.5rem">Izboljšajte komunikacijo med DJ-jem in publiko ter ustvarite dinamično atmosfero na vsaki zabavi.</p>
+            <a href="#about" class="btn btn-primary btn-lg">Več o nas</a>
+            <a href="#features" class="btn btn-secondary btn-lg">Funkcionalnosti</a>
+        </div>
+    </section>
+
+    <section id="about" class="feature-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="\Images\1.jpg" alt="O Ideji" class="img-fluid mb-4" style="border:2px solid white">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-left mb-4" style="color: #FF2E63">O IDEJI</h2>
+                    <p>Naš produkt je spletna aplikacija za priporočanje glasbe z namenom izboljšanja in olajšanja komunikacije med DJ-jem in publiko, tako na javnih kot zasebnih zabavah. Prav tako pa produkt ustvari dinamično atmosfero na vsaki zabavi in zagotavlja možnost sodelovanja publike pri izbiri glasbe.</p>
+                    <p>Ciljna publika so predvsem DJ-ji in organizatorji, ki morajo sodelovati z publiko. Aplikacija omogoča gostom, da priporočajo pesmi, glasujejo za priporočila drugih udeležencev in sodelujejo pri ustvarjanju zabavne atmosfere.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="feature-section bg-primary">
+        <div class="container">
+            <h2 style="margin-top:-50px;" class="text-center mb-4">FUNKCIONALNOSTI</h2>
+            <div class="row" style="padding-top:40px">
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="border:2px solid white">
+                        <img src="\Images\4.png" style="height:300px; width:100%; object-fit:cover" class="img-fluid header-image" />
+                        <div class="card-header" style="padding:5px">
+                            <i class="fas fa-music feature-icon" style="padding:10px 20px 10px 10px"></i> <b style="font-size:1.5rem">Priporočanje Pesmi</b>
+                        </div>
+                        <div class="card-body">
+                            <p>Gosti lahko priporočajo pesmi skozi spletno aplikacijo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="border:2px solid white">
+                        <img src="\Images\5.jpg" style="height:300px; width:100%; object-fit:cover" class="img-fluid header-image" />
+                        <div class="card-header" style="padding:5px">
+                            <i class="fas fa-vote-yea feature-icon" style="padding:10px 20px 10px 10px"></i> <b style="font-size:1.5rem">Glasovanje</b>
+                        </div>
+                        <div class="card-body">
+                            <p>Gostje lahko glasujejo za priporočila drugih udeležencev.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="border:2px solid white">
+                 
+                        <img src="\Images\6.jpg" style="height:300px; width:100%; object-fit:cover" class="img-fluid header-image" />
+                        <div class="card-header" style="padding:5px">
+                            <i class="fas fa-trophy feature-icon" style="padding:10px 20px 10px 10px"></i> <b style="font-size:1.5rem">Lestvice z Točkami</b>
+                        </div>
+                        <div class="card-body">
+                            <p>Produkt vsebuje lestvice z točkami za najbolj aktivne goste.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="flip-cards" class="feature-section">
+        <div class="container">
+            <h2 class="text-center mb-4" style="margin-top:-50px;">KAKO SE UPORABLJA?</h2>
+            <div class="row" style="padding-top:40px">
+            
+                <div class="col-md-6 mb-4">
+                    <div class="flip-card flip-card-primary">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:url('Images/8.jpg')">
+                                <h1 style="font-weight:bold">Uporabniški Vidik</h1>
+                            </div>
+                            <div class="flip-card-back">
+                                <h2 style="font-weight:bold">Uporabniški Vidik</h2>
+                                <p style="font-size:1.25rem">1. Gost skenira QR kodo, ki jo ima DJ ali organizator. <br /> 2. Gost lahko glasuje za pesmi ali predlaga svoje pesmi. <br />    3. Če DJ izbere njegovo pesem, gost dobi več točk.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+               
+                <div class="col-md-6 mb-4">
+                    <div class="flip-card flip-card-secondary">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front" style="background:url('Images/9.jpg'); background-position:50% 80%">
+                                <h1 style="font-weight:bold">Vidik DJ-ja</h1>
+                            </div>
+                            <div class="flip-card-back">
+                                <h2 style="font-weight:bold">Vidik DJ-ja</h2>
+                                <p style="font-size:1.25rem">
+                                    1. DJ vidi najbolj glasovane pesmi.<br>
+                                    2. DJ izbira med njimi. <br />
+                                    3. Organizator lahko dodeli nagrade najbolj aktivnim gostom na podlagi točk.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
