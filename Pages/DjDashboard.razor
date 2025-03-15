@@ -1,4 +1,9 @@
-﻿@page "/djdash"
+﻿@using Microsoft.AspNetCore.Components;
+@using Dj.Models;
+@using Dj.Services;
+@inject Dj.Services.ApiService ApiService
+
+@page "/djdash"
 
 <HeadContent>
     <link href="css/DjDashboard.css" rel="stylesheet" />
@@ -12,10 +17,10 @@
     <div class="container">
         <div id="dj-event-selection">
             <h2 for="eventSelect">Select Event:</h2>
-            <select id="eventSelect" class="form-control" @bind="SelectedEvent">
-                @foreach (var ev in Events)
+            <select id="eventSelect" class="form-control" @bind="SelectedEventId">
+                @foreach (var ev in events)
                 {
-                    <option value="@ev">@ev</option>
+                    <option value="@ev.ObjectId">@ev.Name - @ev.Date.ToString("dd.MM.yyyy HH:mm") - @ev.Location</option>
                 }
             </select>
         </div>
@@ -38,9 +43,9 @@
                         {
                             <tr>
                                 <td>@(rank++)</td>
-                                <td>@song.Name</td>
-                                <td>@song.Artist</td>
-                                <td>@song.Points</td>
+                                <td>@song.MusicName</td>
+                                <td>@song.MusicArtist</td>
+                                <td>@song.Votes</td>
                             </tr>
                         }
                     }
@@ -59,7 +64,7 @@
                         {
                             <li class="list-group-item list-group-item-action" style="cursor: pointer;"
                                 @onclick="() => AddSongFromSearch(suggestion)">
-                                @suggestion.Name - @suggestion.Artist
+                                @suggestion.MusicName - @suggestion.MusicArtist
                             </li>
                         }
                     </ul>
@@ -93,10 +98,10 @@
                     @foreach (var song in PaginatedSongs)
                     {
                         <tr>
-                            <td><input type="checkbox" @bind="song.IsSelected" /></td>
-                            <td>@song.Name</td>
-                            <td>@song.Artist</td>
-                            <td>@song.Points</td>
+                            <td><input type="checkbox" @* @bind="song.IsSelected" *@ /></td>
+                            <td>@song.MusicName</td>
+                            <td>@song.MusicArtist</td>
+                            <td>@song.Votes</td>
                         </tr>
                     }
                 </tbody>
@@ -119,3 +124,117 @@
         </div>
     </div>
 </section>
+
+
+
+@code {
+
+    private List<DJEvent> events = new();
+
+    private DJEvent _selectedEvent;
+    private string SelectedEventId
+    {
+        get => _selectedEvent?.ObjectId ?? string.Empty;
+        set
+        {
+            if (_selectedEvent == null || _selectedEvent.ObjectId != value)
+            {
+                _selectedEvent = events.FirstOrDefault(e => e.ObjectId == value);
+                OnEventChanged();
+            }
+        }
+    }
+
+    private DJEvent SelectedEvent => events.FirstOrDefault(e => e.ObjectId == SelectedEventId) ?? new DJEvent();
+
+
+    private string SearchTerm { get; set; } = "";
+    private List<Music> CurrentEventMusic { get; set; } = new List<Music>();
+
+
+    private IEnumerable<Music> FilteredSongs => string.IsNullOrWhiteSpace(SearchTerm)
+        ? Enumerable.Empty<Music>()
+        : CurrentEventMusic.Where(s =>
+               s.MusicName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
+            || s.MusicArtist.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
+
+    private const int PageSize = 15;
+    private int CurrentPage { get; set; } = 1;
+
+    private int TotalPages =>
+        (int)Math.Ceiling((decimal)(CurrentEventMusic.Count / (double)PageSize));
+
+    private IEnumerable<Music> PaginatedSongs =>
+        CurrentEventMusic
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize) ?? Enumerable.Empty<Music>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetEvents();
+    }
+
+    protected async Task GetEvents()
+    {
+        events = await ApiService.GetEventsAsync();
+    }
+
+    private void OnEventChanged()
+    {
+        // if (EventDataDict.TryGetValue(SelectedEvent, out var data))
+        // {
+        //     CurrentEventData = data;
+        // }
+        // else
+        // {
+        //     CurrentEventData = new EventData();
+        // }
+
+        CurrentPage = 1;
+        StateHasChanged();
+    }
+
+    private IEnumerable<Music> SortedLeaderboard => CurrentEventMusic
+        .OrderByDescending(s => s.Votes)
+        .Take(10) ?? Enumerable.Empty<Music>();
+
+    private void DeleteSelectedSongs()
+    {
+        // CurrentEventData.Songs = CurrentEventData.Songs
+        //     .Where(s => !s.IsSelected)
+        //     .ToList();
+
+        // CurrentPage = 1;
+        // StateHasChanged();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString() ?? string.Empty;
+        StateHasChanged();
+    }
+
+    private void AddSongFromSearch(Music music)
+    {
+        if (!CurrentEventMusic.Any(s => s.MusicName == music.MusicName && s.MusicArtist == music.MusicArtist))
+        {
+            // CurrentEventMusic.Add(new mu
+            //     {
+            //         Name = music.Name,
+            //         Artist = music.Artist,
+            //         Points = 0
+            //     });
+        }
+        SearchTerm = "";
+        StateHasChanged();
+    }
+
+    private void GoToPage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+        {
+            CurrentPage = page;
+            StateHasChanged();
+        }
+    }
+}
