@@ -2,6 +2,7 @@
 @using Dj.Services
 @using Dj.Models
 @using System.Text.Json
+@using System.Text.Json.Serialization;
 @inject AuthService AuthService
 @inject AppState AppState
 @inject NavigationManager NavigationManager
@@ -18,7 +19,7 @@
     </div>
 </section>
 
-<section class="default-page-dark feature-section" style="padding-top:100px">
+<section class="default-page-dark feature-section pb-5" style="padding-top:100px">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -30,15 +31,15 @@
                     <div class="card-body">
                         <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
                             <div class="form-group">
-                                <label for="email">E-pošta</label>
+                                <label for="uporIme">Uporabniško ime</label>
                                 <div class="input-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <InputText id="email"
+                                <InputText id="uporIme"
                                            type="text"
                                            class="form-control"
-                                           placeholder="E-pošta"
-                                           @bind-Value="loginModel.Email"
+                                           placeholder="Uporabniško ime"
+                                           @bind-Value="loginModel.Username"
                                            required />
                             </div>
                             <div class="form-group">
@@ -60,7 +61,7 @@
 
                         @if (!string.IsNullOrEmpty(message))
                         {
-                            <div class="alert alert-info mt-3">@message</div>
+                            <div class="alert alert-danger mt-3">@message</div>
                         }
                     </div>
                 </div>
@@ -72,30 +73,86 @@
                         <i class="fas fa-user-plus feature-icon"></i> <b style="font-size:1.5rem">Registracija</b>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <EditForm Model="@loginModel" OnValidSubmit="@HandleRegistration">
                             <div class="form-group">
-                                <label for="username">Uporabniško ime</label>
-                                <div class="input-icon">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <input id="username" type="text" class="form-control" placeholder="Uporabniško ime" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email-register">E-pošta</label>
+                                <label for="RegUporIme">Uporabniško ime*</label>
                                 <div class="input-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <input id="email-register" type="email" class="form-control" placeholder="E-pošta" required>
+                                <InputText id="RegUporIme"
+                                           type="text"
+                                           class="form-control"
+                                           placeholder="Uporabniško ime"
+                                           @bind-Value="registerModel.Username"
+                                           required />
                             </div>
                             <div class="form-group">
-                                <label for="password-register">Geslo</label>
+                                <label for="RegEmail">Email*</label>
                                 <div class="input-icon">
                                     <i class="fas fa-lock"></i>
                                 </div>
-                                <input id="password-register" type="password" class="form-control" placeholder="Geslo" required>
+                                <InputText id="RegEmail"
+                                           class="form-control"
+                                           placeholder="Email"
+                                           @bind-Value="registerModel.Email"
+                                           required />
+                            </div>
+                            <div class="form-group">
+                                <label for="ime">Ime*</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <InputText id="ime"
+                                           class="form-control"
+                                           placeholder="Ime"
+                                           @bind-Value="registerModel.Name"
+                                           required />
+                            </div>
+                            <div class="form-group">
+                                <label for="priimek">Priimek*</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <InputText id="priimek"
+                                           class="form-control"
+                                           placeholder="Priimek"
+                                           @bind-Value="registerModel.FamilyName" 
+                                           required />
+                            </div>
+                            <div class="form-group">
+                                <label for="RegPassword">Geslo*</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <InputText id="RegPassword"
+                                           type="password"
+                                           class="form-control"
+                                           placeholder="Geslo"
+                                           @bind-Value="registerModel.Password"
+                                           required />
+                            </div>
+                            <div class="form-group">
+                                <label for="RegPassword2">Ponovite geslo*</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <InputText id="RegPassword2"
+                                           type="password"
+                                           class="form-control"
+                                           placeholder="Geslo"
+                                           @bind-Value="PasswordCheck"
+                                           required />
                             </div>
                             <button type="submit" class="btn btn-secondary button-fancy w-100">Registracija</button>
-                        </form>
+                        </EditForm>
+                        @if (!string.IsNullOrEmpty(registerMessage))
+                        {
+                            <div class="alert alert-danger mt-3">@registerMessage</div>
+                        }
+                        @if (!string.IsNullOrEmpty(registerMessageSuccessful))
+                        {
+                            <div class="alert alert-success mt-3">@registerMessageSuccessful</div>
+                        }
                     </div>
                 </div>
             </div>
@@ -107,14 +164,21 @@
 
 @code {
     private LoginModel loginModel = new();
+
+    private RegisterModel registerModel = new();
+
+    private string PasswordCheck = string.Empty;
+
     private string? message;
+    private string? registerMessage;
+    private string? registerMessageSuccessful;
 
     private async Task HandleLogin()
     {
         message = null;
 
         var loginResponse = await AuthService.LoginAsync(
-            loginModel.Email,
+            loginModel.Username,
             loginModel.Password
         );
 
@@ -134,9 +198,57 @@
         }
     }
 
+    private async Task HandleRegistration()
+    {
+        registerMessage = null;
+        registerMessageSuccessful = null;
+
+        if (registerModel.Password == PasswordCheck)
+        {
+            var response = await AuthService.RegisterAsync(registerModel.Username, registerModel.Email, registerModel.Name, registerModel.FamilyName, registerModel.Password, registerModel.ImageUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                registerMessageSuccessful = $"Registracija uspešna! Sedaj se lahko prijavite.";
+                registerMessage = null;
+            }
+            else
+            {
+                registerMessage = "Registracija ni uspela. Preverite podatke.";
+                registerMessageSuccessful = null;
+            }
+        }
+        else
+        {
+            registerMessage = "Gesli se morata ujemati!";
+            registerMessageSuccessful = null;
+        }
+    }
+
     public class LoginModel
     {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterModel
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = "unspecified";
+
+        [JsonPropertyName("familyName")]
+        public string FamilyName { get; set; } = "unspecified";
+
+        [JsonPropertyName("imageUrl")]
+        public string ImageUrl { get; set; } = "https://cdn-icons-png.flaticon.com/512/6342/6342563.png";
+
+        [JsonPropertyName("username")]
+        public string Username { get; set; } = string.Empty;
+
+        [JsonPropertyName("email")]
         public string Email { get; set; } = string.Empty;
+
+        [JsonPropertyName("password")]
         public string Password { get; set; } = string.Empty;
     }
 }
