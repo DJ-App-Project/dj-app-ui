@@ -25,4 +25,9 @@ builder.Services.AddScoped<AppState>();
 builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<AuthService>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+var appState = host.Services.GetRequiredService<AppState>();
+await appState.InitializeAsync();
+
+await host.RunAsync();

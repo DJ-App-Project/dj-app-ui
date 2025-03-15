@@ -1,6 +1,7 @@
 ﻿@using Dj.Services
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IJSRuntime JSRuntime
 
 @if (AppState == null)
 {
@@ -71,6 +72,7 @@ else
                 navbar.classList.add('scrolled');
             }
         });
+
     </script>
 }
 
@@ -96,7 +98,10 @@ else
     {
         await LocalStorage.RemoveItemAsync("token");
         await LocalStorage.RemoveItemAsync("user");
-        AppState?.SetLoggedIn(false, null);
+        if (AppState != null)
+        {
+            await AppState.SetLoggedInAsync(false, null);
+        }
         Navigation.NavigateTo("/");
     }
 
