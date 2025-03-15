@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static System.Net.WebRequestMethods;
 
 namespace Dj.Services
 {
@@ -47,6 +48,27 @@ namespace Dj.Services
                 Console.WriteLine(ex.Message);
                 return null;
             }
+        }
+
+        public async Task<HttpResponseMessage> RegisterAsync(string username, string email, string name, string familyName, string password, string imageUrl)
+        {
+            var payload = new { name, familyName, imageUrl, username, email, password };
+
+            Console.WriteLine("Sending POST request to create event...");
+            var response = await _httpClient.PostAsJsonAsync("/api/auth/Register", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Registered successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to Register user. Status code: {response.StatusCode}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error content: {errorContent}");
+            }
+
+            return response;
         }
     }
 }
