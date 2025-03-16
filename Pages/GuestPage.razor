@@ -1,68 +1,128 @@
 ﻿@page "/guestpage"
-@using DJ.Pages
-@inject DjDashboard DjDashboardService
+@using Dj.Models
+@using Dj.Services
+@inject ApiService ApiService
 
-<h3>GuestPage</h3>
+<div class="container my-4">
+    <div class="card shadow-lg p-4 rounded-3">
+        <h2 class="text-center mb-4">Izberi dogodek</h2>
 
-<h4>Predlagane pesmi od DJ-a</h4>
-@if (allSongs != null && allSongs.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Naslov</th>
-                <th>Izvajalec</th>
-                <th>Točke</th>
-                <th>Glasuj</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var song in allSongs)
-            {
+        <div class="mb-4">
+            <select class="form-select" @onchange="OnEventChange">
+                <option value="">Izberi dogodek...</option>
+                @foreach (var ev in Events)
+                {
+                    <option value="@ev.ObjectId">@ev.Name</option>
+                }
+            </select>
+        </div>
+
+        <h4 class="mt-5">Predlagaj svojo pesem 🎵</h4>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <input class="form-control" @bind="newSongName" placeholder="Naslov pesmi" />
+            </div>
+            <div class="col-md-6">
+                <input class="form-control" @bind="newSongArtist" placeholder="Izvajalec" />
+            </div>
+        </div>
+        <button class="btn btn-primary mt-3" @onclick="AddSong">Dodaj predlog</button>
+
+        <h4 class="mt-5">Leaderboard 🎧</h4>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>@song.Name</td>
-                    <td>@song.Artist</td>
-                    <td>@song.Points</td>
-                    <td><button @onclick="() => VoteForSong(song)">Glasuj</button></td>
+                    <th>#</th>
+                    <th>Pesem</th>
+                    <th>Izvajalec</th>
+                    <th>Točke</th>
+                    <th>Glasuj</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Trenutno ni predlaganih pesmi od DJ-a.</p>
-}
-
-<h4>Dodaj svoj predlog pesmi</h4>
-<input @bind="newSongTitle" placeholder="Naslov pesmi" />
-<input @bind="newSongArtist" placeholder="Izvajalec" />
-<button @onclick="AddSong">Dodaj pesem</button>
+            </thead>
+            <tbody>
+                @if (Songs != null)
+                {
+                    int rank = 1;
+                    @foreach (var song in Songs.OrderByDescending(s => s.Votes))
+                    {
+                        <tr class="align-middle">
+                            <td><strong>@rank</strong></td>
+                            <td style="font-size: 1.2em; font-weight: bold; color: #e0e0e0;">@song.MusicName</td>
+                            <td style="font-size: 1.1em; color: #cfcfcf;">@song.MusicArtist</td>
+                            <td><span class="badge bg-primary" style="font-size: 1em;">@song.Votes</span></td>
+                            <td><button class="btn btn-success btn-sm" @onclick="() => VoteForSong(song)">Glasuj 👍</button></td>
+                        </tr>
+                        rank++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @code {
-    private List<DjDashboard.Song> allSongs = new List<DjDashboard.Song>();
-    private string newSongTitle;
+    private List<DJEvent> Events = new();
+    private List<MusicFetched> Songs = new();
+    private string selectedEventId;
+
+    private string newSongName;
     private string newSongArtist;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Pridobivanje pesmi iz DJDashboarda
-        allSongs = DjDashboardService.CurrentEventData.Songs;
+        Events = await ApiService.GetEventsAsync();
     }
 
-    private void AddSong()
+    private async Task OnEventChange(ChangeEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(newSongTitle) && !string.IsNullOrWhiteSpace(newSongArtist))
+        selectedEventId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedEventId))
         {
-            var newSong = new DjDashboard.Song { Name = newSongTitle, Artist = newSongArtist, Points = 0 };
-            allSongs.Add(newSong);
-            newSongTitle = string.Empty;
-            newSongArtist = string.Empty;
+            Songs = await ApiService.GetEventMusicAsync(selectedEventId);
+        }
+        else
+        {
+            Songs = new();
         }
     }
 
-    private void VoteForSong(DjDashboard.Song song)
+    private async Task VoteForSong(MusicFetched song)
     {
-        song.Points++;
+        bool success = await ApiService.VoteForEventSongAsync(selectedEventId, song.MusicName, song.MusicArtist);
+
+        if (success)
+        {
+            await OnEventChange(new ChangeEventArgs { Value = selectedEventId });
+        }
+        else
+        {
+            Console.WriteLine("Napaka pri glasovanju za pesem.");
+        }
+    }
+
+    private async Task AddSong()
+    {
+        if (!string.IsNullOrWhiteSpace(newSongName) && !string.IsNullOrWhiteSpace(newSongArtist))
+        {
+            var song = new Music
+                {
+                    MusicName = newSongName,
+                    MusicArtist = newSongArtist,
+                    MusicGenre = ""
+                };
+
+            bool success = await ApiService.AddMusicToEventAsync(selectedEventId, song);
+
+            if (success)
+            {
+                newSongName = "";
+                newSongArtist = "";
+                await OnEventChange(new ChangeEventArgs { Value = selectedEventId });
+            }
+            else
+            {
+                Console.WriteLine("Napaka pri dodajanju pesmi.");
+            }
+        }
     }
 }
