@@ -1,8 +1,7 @@
 ﻿@page "/guestpage"
 @using Dj.Models
-@using System.Net.Http.Headers
-@inject HttpClient Http
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@using Dj.Services
+@inject ApiService ApiService
 
 <div class="container my-4">
     <div class="card shadow-lg p-4 rounded-3">
@@ -46,11 +45,11 @@
                     int rank = 1;
                     @foreach (var song in Songs.OrderByDescending(s => s.Votes))
                     {
-                        <tr>
-                            <td>@rank</td>
-                            <td>@song.MusicName</td>
-                            <td>@song.MusicArtist</td>
-                            <td>@song.Votes</td>
+                        <tr class="align-middle">
+                            <td><strong>@rank</strong></td>
+                            <td style="font-size: 1.2em; font-weight: bold; color: #e0e0e0;">@song.MusicName</td>
+                            <td style="font-size: 1.1em; color: #cfcfcf;">@song.MusicArtist</td>
+                            <td><span class="badge bg-primary" style="font-size: 1em;">@song.Votes</span></td>
                             <td><button class="btn btn-success btn-sm" @onclick="() => VoteForSong(song)">Glasuj 👍</button></td>
                         </tr>
                         rank++;
@@ -63,7 +62,7 @@
 
 @code {
     private List<DJEvent> Events = new();
-    private List<Music> Songs = new();
+    private List<MusicFetched> Songs = new();
     private string selectedEventId;
 
     private string newSongName;
@@ -71,10 +70,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        Events = await Http.GetFromJsonAsync<List<DJEvent>>("AllEvents?page=1&pageSize=50") ?? new();
+        Events = await ApiService.GetEventsAsync();
     }
 
     private async Task OnEventChange(ChangeEventArgs e)
@@ -82,7 +78,7 @@
         selectedEventId = e.Value?.ToString();
         if (!string.IsNullOrEmpty(selectedEventId))
         {
-            Songs = await Http.GetFromJsonAsync<List<Music>>($"Music/{selectedEventId}") ?? new();
+            Songs = await ApiService.GetEventMusicAsync(selectedEventId);
         }
         else
         {
@@ -90,24 +86,11 @@
         }
     }
 
-    private async Task VoteForSong(Music song)
+    private async Task VoteForSong(MusicFetched song)
     {
-        var token = await LocalStorage.GetItemAsync<string>("token");
-        var requestData = new
-        {
-            musicName = song.MusicName,
-            musicArtist = song.MusicArtist
-        };
+        bool success = await ApiService.VoteForEventSongAsync(selectedEventId, song.MusicName, song.MusicArtist);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, $"api/event/VoteForEventSong/{selectedEventId}")
-            {
-                Content = JsonContent.Create(requestData)
-            };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var response = await Http.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
+        if (success)
         {
             await OnEventChange(new ChangeEventArgs { Value = selectedEventId });
         }
@@ -121,25 +104,16 @@
     {
         if (!string.IsNullOrWhiteSpace(newSongName) && !string.IsNullOrWhiteSpace(newSongArtist))
         {
-            var songData = new
-            {
-                EvendId = selectedEventId,
-                MusicName = newSongName,
-                MusicArtist = newSongArtist,
-                MusicGenre = "",
-                Visible = true
-            };
-
-            var request = new HttpRequestMessage(HttpMethod.Post, "AddMusicToEvent")
+            var song = new Music
                 {
-                    Content = JsonContent.Create(songData)
+                    MusicName = newSongName,
+                    MusicArtist = newSongArtist,
+                    MusicGenre = ""
                 };
-            var token = await LocalStorage.GetItemAsync<string>("token");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var response = await Http.SendAsync(request);
+            bool success = await ApiService.AddMusicToEventAsync(selectedEventId, song);
 
-            if (response.IsSuccessStatusCode)
+            if (success)
             {
                 newSongName = "";
                 newSongArtist = "";

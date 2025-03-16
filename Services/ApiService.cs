@@ -232,6 +232,35 @@ namespace Dj.Services
                 return false;
             }
         }
+
+        public async Task<bool> VoteForEventSongAsync(string eventId, string musicName, string musicArtist)
+        {
+            var token = await _localStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _http.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var requestBody = new
+            {
+                musicName = musicName,
+                musicArtist = musicArtist
+            };
+
+            var response = await _http.PostAsJsonAsync($"api/event/VoteForEventSong/{eventId}", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Failed to vote for song. Status: {response.StatusCode}, Error: {error}");
+                return false;
+            }
+        }
     }
 
 }
