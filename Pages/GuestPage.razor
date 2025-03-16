@@ -1,0 +1,68 @@
+﻿@page "/guestpage"
+@using DJ.Pages
+@inject DjDashboard DjDashboardService
+
+<h3>GuestPage</h3>
+
+<h4>Predlagane pesmi od DJ-a</h4>
+@if (allSongs != null && allSongs.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Naslov</th>
+                <th>Izvajalec</th>
+                <th>Točke</th>
+                <th>Glasuj</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var song in allSongs)
+            {
+                <tr>
+                    <td>@song.Name</td>
+                    <td>@song.Artist</td>
+                    <td>@song.Points</td>
+                    <td><button @onclick="() => VoteForSong(song)">Glasuj</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Trenutno ni predlaganih pesmi od DJ-a.</p>
+}
+
+<h4>Dodaj svoj predlog pesmi</h4>
+<input @bind="newSongTitle" placeholder="Naslov pesmi" />
+<input @bind="newSongArtist" placeholder="Izvajalec" />
+<button @onclick="AddSong">Dodaj pesem</button>
+
+@code {
+    private List<DjDashboard.Song> allSongs = new List<DjDashboard.Song>();
+    private string newSongTitle;
+    private string newSongArtist;
+
+    protected override void OnInitialized()
+    {
+        // Pridobivanje pesmi iz DJDashboarda
+        allSongs = DjDashboardService.CurrentEventData.Songs;
+    }
+
+    private void AddSong()
+    {
+        if (!string.IsNullOrWhiteSpace(newSongTitle) && !string.IsNullOrWhiteSpace(newSongArtist))
+        {
+            var newSong = new DjDashboard.Song { Name = newSongTitle, Artist = newSongArtist, Points = 0 };
+            allSongs.Add(newSong);
+            newSongTitle = string.Empty;
+            newSongArtist = string.Empty;
+        }
+    }
+
+    private void VoteForSong(DjDashboard.Song song)
+    {
+        song.Points++;
+    }
+}
