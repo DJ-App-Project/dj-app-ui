@@ -33,6 +33,8 @@ namespace Dj.Models
         [JsonPropertyName("recommenderID")]
         public string? RecommenderID { get; set; }
 
+        public Music() { }
+
         public Music(string? objectId, string? musicName, string? musicArtist, string? musicGenre, bool visible, int votes, List<string> votersIDs, bool isUserRecommendation, string? recommenderID)
         {
             ObjectId = objectId;

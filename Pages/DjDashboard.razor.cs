@@ -4,7 +4,7 @@ namespace DJ.Pages
 {
     public partial class DjDashboard : ComponentBase
     {
-        private List<string> Events { get; set; } = new List<string> { "Event A", "Event B", "Event C" };
+        public List<string> Events { get; set; } = new List<string> { "Event A", "Event B", "Event C" };
 
         private string _selectedEvent;
         private string SelectedEvent
@@ -188,5 +188,9 @@ namespace DJ.Pages
             };
             EventDataDict["Event C"] = eventCData;
         }
+
+        public List<string> GetEvents() => Events;
+
+        
     }
 }
