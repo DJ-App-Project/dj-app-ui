@@ -9,13 +9,13 @@ namespace Dj.Models
         [JsonPropertyName("objectId")]
         public string? ObjectId { get; set; }
 
-        [JsonPropertyName("musicName")]
+        [JsonPropertyName("name")]
         public string? MusicName { get; set; }
 
-        [JsonPropertyName("musicArtist")]
+        [JsonPropertyName("artist")]
         public string? MusicArtist { get; set; }
 
-        [JsonPropertyName("musicGenre")]
+        [JsonPropertyName("genre")]
         public string? MusicGenre { get; set; }
 
         [JsonPropertyName("visible")]
@@ -33,6 +33,8 @@ namespace Dj.Models
         [JsonPropertyName("recommenderID")]
         public string? RecommenderID { get; set; }
 
+        public Music() { }
+
         public Music(string? objectId, string? musicName, string? musicArtist, string? musicGenre, bool visible, int votes, List<string> votersIDs, bool isUserRecommendation, string? recommenderID)
         {
             ObjectId = objectId;
@@ -48,6 +50,14 @@ namespace Dj.Models
 
         public Music(string? musicName, string? musicArtist, string? musicGenre)
         {
+            MusicName = musicName;
+            MusicArtist = musicArtist;
+            MusicGenre = musicGenre;
+        }
+
+        public Music(string? objectId, string? musicName, string? musicArtist, string? musicGenre)
+        {
+            ObjectId = objectId;
             MusicName = musicName;
             MusicArtist = musicArtist;
             MusicGenre = musicGenre;
