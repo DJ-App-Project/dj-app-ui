@@ -1,4 +1,9 @@
-﻿@page "/djdash"
+﻿@using Microsoft.AspNetCore.Components
+@using Dj.Models
+@using Dj.Services
+@inject Dj.Services.ApiService ApiService
+
+@page "/djdash"
 
 <HeadContent>
     <link href="css/DjDashboard.css" rel="stylesheet" />
@@ -10,12 +15,15 @@
     </div>
 
     <div class="container">
+
         <div id="dj-event-selection">
             <h2 for="eventSelect">Select Event:</h2>
-            <select id="eventSelect" class="form-control" @bind="SelectedEvent">
-                @foreach (var ev in Events)
+            <select id="eventSelect" class="form-control" @bind="SelectedEventId">
+                @foreach (var ev in events)
                 {
-                    <option value="@ev">@ev</option>
+                    <option value="@ev.ObjectId">
+                        @ev.Name - @ev.Date.ToString("dd.MM.yyyy HH:mm") - @ev.Location
+                    </option>
                 }
             </select>
         </div>
@@ -34,13 +42,13 @@
                 <tbody>
                     @{
                         int rank = 1;
-                        foreach (var song in SortedLeaderboard)
+                        foreach (var song in LeaderboardSongs.Take(10))
                         {
                             <tr>
                                 <td>@(rank++)</td>
-                                <td>@song.Name</td>
-                                <td>@song.Artist</td>
-                                <td>@song.Points</td>
+                                <td>@song.MusicName</td>
+                                <td>@song.MusicArtist</td>
+                                <td>@song.Votes</td>
                             </tr>
                         }
                     }
@@ -51,15 +59,19 @@
         <div class="add-song-container">
             <h2 class="section-title">Add a New Song via Search</h2>
             <div class="form-group">
-                <input id="songSearch" type="text" class="form-control" @bind="SearchTerm" @oninput="OnSearchInput" autocomplete="off" />
+                <input id="songSearch" type="text" class="form-control"
+                       @bind="SearchTerm" @oninput="OnSearchInput"
+                       autocomplete="off" />
+
                 @if (!string.IsNullOrEmpty(SearchTerm) && FilteredSongs.Any())
                 {
                     <ul class="list-group">
                         @foreach (var suggestion in FilteredSongs)
                         {
-                            <li class="list-group-item list-group-item-action" style="cursor: pointer;"
+                            <li class="list-group-item list-group-item-action"
+                                style="cursor: pointer;"
                                 @onclick="() => AddSongFromSearch(suggestion)">
-                                @suggestion.Name - @suggestion.Artist
+                                @suggestion.MusicName - @suggestion.MusicArtist
                             </li>
                         }
                     </ul>
@@ -68,12 +80,15 @@
         </div>
 
         <div class="d-flex flex-wrap justify-content-between align-items-center w-100">
-            <h2 class="section-title mb-2 mb-md-0">All <small>Listed Songs</small></h2>
+            <h2 class="section-title mb-2 mb-md-0">
+                All <small>Listed Songs</small>
+            </h2>
 
             <div class="d-flex align-items-center gap-2">
                 <span class="toggle-text">Allow users to add songs:</span>
                 <label class="switch mb-0">
-                    <input type="checkbox">
+                    <input type="checkbox"
+                           @bind="IsUserRecommendationEnabled" />
                     <span class="slider"></span>
                 </label>
             </div>
@@ -93,10 +108,12 @@
                     @foreach (var song in PaginatedSongs)
                     {
                         <tr>
-                            <td><input type="checkbox" @bind="song.IsSelected" /></td>
-                            <td>@song.Name</td>
-                            <td>@song.Artist</td>
-                            <td>@song.Points</td>
+                            <td>
+                                <input type="checkbox" @bind="song.IsSelected" />
+                            </td>
+                            <td>@song.MusicName</td>
+                            <td>@song.MusicArtist</td>
+                            <td>@song.Votes</td>
                         </tr>
                     }
                 </tbody>
@@ -104,18 +121,187 @@
         </div>
 
         <div class="pagination-container d-flex justify-content-center align-items-center gap-2 mb-4">
-            <button @onclick="() => GoToPage(CurrentPage - 1)" disabled="@(CurrentPage == 1)">&lt;</button>
+            <button @onclick="() => GoToPage(CurrentPage - 1)"
+                    disabled="@(CurrentPage == 1)">
+                &lt;
+            </button>
 
             @for (int i = 1; i <= TotalPages; i++)
             {
-                <button @onclick="() => GoToPage(i)" class="@(i == CurrentPage ? "active-page" : "")">@i</button>
+                <button @onclick="() => GoToPage(i)"
+                        class="@(i == CurrentPage ? "active-page" : "")">
+                    @i
+                </button>
             }
 
-            <button @onclick="() => GoToPage(CurrentPage + 1)" disabled="@(CurrentPage == TotalPages)">&gt;</button>
+            <button @onclick="() => GoToPage(CurrentPage + 1)"
+                    disabled="@(CurrentPage == TotalPages)">
+                &gt;
+            </button>
         </div>
 
         <div class="d-flex justify-content-center align-items-center w-100">
-            <button class="btn-danger" @onclick="DeleteSelectedSongs">Delete Selected Songs</button>
+            <button class="button-fancy" @onclick="DeleteSelectedSongs">
+                Delete Selected Songs
+            </button>
         </div>
+
     </div>
 </section>
+
+@code {
+
+    private List<DJEvent> events = new();
+    private DJEvent _selectedEvent;
+
+    private string SelectedEventId
+    {
+        get => _selectedEvent?.ObjectId ?? string.Empty;
+        set
+        {
+            if (_selectedEvent == null || _selectedEvent.ObjectId != value)
+            {
+                _selectedEvent = events.FirstOrDefault(e => e.ObjectId == value);
+                _ = OnEventChangedAsync();
+            }
+        }
+    }
+
+    private DJEvent SelectedEvent =>
+        events.FirstOrDefault(e => e.ObjectId == SelectedEventId) ?? new DJEvent();
+
+    private List<MusicFetched> CurrentEventMusic { get; set; } = new();
+    private List<Music> AllSongs { get; set; } = new();
+    private List<MusicLeaderboard> LeaderboardSongs { get; set; } = new();
+    private bool _isUserRecommendationEnabled;
+
+    private bool IsUserRecommendationEnabled
+    {
+        get => _isUserRecommendationEnabled;
+        set
+        {
+            if (_isUserRecommendationEnabled != value)
+            {
+                _isUserRecommendationEnabled = value;
+                _ = ToggleUserRecommendationAsync(value);
+            }
+        }
+    }
+
+    private string SearchTerm { get; set; } = "";
+
+    private IEnumerable<Music> FilteredSongs =>
+        string.IsNullOrWhiteSpace(SearchTerm)
+            ? Enumerable.Empty<Music>()
+            : AllSongs.Where(s =>
+                   s.MusicName?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true
+                || s.MusicArtist?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
+
+    private const int PageSize = 15;
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages =>
+        (int)Math.Ceiling(CurrentEventMusic.Count / (double)PageSize);
+
+    private IEnumerable<MusicFetched> PaginatedSongs =>
+        CurrentEventMusic
+            .Skip((CurrentPage - 1) * PageSize)
+            .Take(PageSize) ?? Enumerable.Empty<MusicFetched>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        events = await ApiService.GetEventsAsync();
+        if (events.Any())
+        {
+            SelectedEventId = events[0].ObjectId;
+        }
+        AllSongs = await ApiService.GetAllSongsAsync();
+    }
+
+    private async Task OnEventChangedAsync()
+    {
+        CurrentPage = 1;
+        if (!string.IsNullOrEmpty(SelectedEventId))
+        {
+            CurrentEventMusic = await ApiService.GetEventMusicAsync(SelectedEventId);
+            LeaderboardSongs = await ApiService.GetLeaderboardAsync(SelectedEventId);
+        }
+        StateHasChanged();
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString() ?? string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task AddSongFromSearch(Music selectedSong)
+    {
+        if (string.IsNullOrEmpty(SelectedEventId))
+        {
+            Console.WriteLine("No event selected. Cannot add music.");
+            return;
+        }
+        var success = await ApiService.AddMusicToEventAsync(SelectedEventId, selectedSong);
+        if (success)
+        {
+            Console.WriteLine($"Song '{selectedSong.MusicName}' successfully added to event {SelectedEventId}.");
+            CurrentEventMusic = await ApiService.GetEventMusicAsync(SelectedEventId);
+            LeaderboardSongs = await ApiService.GetLeaderboardAsync(SelectedEventId);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine($"Failed to add song '{selectedSong.MusicName}' to event {SelectedEventId}.");
+        }
+        SearchTerm = "";
+    }
+
+    private async Task ToggleUserRecommendationAsync(bool newValue)
+    {
+        bool success = await ApiService.SetEnableUserRecommendationAsync(SelectedEventId, newValue);
+        if (!success)
+        {
+            Console.WriteLine("Failed to update user recommendation setting. Reverting toggle...");
+            _isUserRecommendationEnabled = !newValue;
+            StateHasChanged();
+        }
+    }
+
+    private void GoToPage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+        {
+            CurrentPage = page;
+            StateHasChanged();
+        }
+    }
+
+    private async Task DeleteSelectedSongs()
+    {
+        var selectedSongs = CurrentEventMusic.Where(s => s.IsSelected).ToList();
+        if (!selectedSongs.Any())
+        {
+            Console.WriteLine("No songs selected for removal.");
+            return;
+        }
+        foreach (var song in selectedSongs)
+        {
+            var success = await ApiService.RemoveMusicFromEventAsync(
+                SelectedEventId,
+                song.MusicName,
+                song.MusicArtist
+            );
+            if (success)
+            {
+                Console.WriteLine($"Removed '{song.MusicName}' from event {SelectedEventId}.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to remove '{song.MusicName}' from event {SelectedEventId}.");
+            }
+        }
+        CurrentEventMusic = await ApiService.GetEventMusicAsync(SelectedEventId);
+        StateHasChanged();
+    }
+
+}

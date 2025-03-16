@@ -37,10 +37,7 @@ namespace Dj.Models
         [JsonPropertyName("musicConfig")]
         public MusicConfig? MusicConfig { get; set; }
 
-        public DJEvent()
-        {
-
-        }
+        public DJEvent() { }
 
         public DJEvent(string objectId, string userId, string djId, string name, string description, DateTime date, string location, string qrCode, bool active, MusicConfig musicConfig)
         {
