@@ -120,6 +120,12 @@ small {
     color: #0099D1;
 }
 
+.button-fancy {
+    padding: 17px 40px;
+    margin-bottom: 50px;
+    margin-top: 10px;
+}
+ /*
 button {
     padding: 17px 40px;
     border-radius: 50px;
@@ -148,8 +154,8 @@ button {
         transform: translateY(10px);
         transition: 100ms;
     }
-
-
+    */
+     
 
 
 .switch {
@@ -203,4 +209,10 @@ button {
     width: 1.6em;
     height: 1.6em;
     bottom: 0;
+}
+
+.pagination-container button{
+    border: 0;
+    background-color: transparent;
+    color: azure;
 }
